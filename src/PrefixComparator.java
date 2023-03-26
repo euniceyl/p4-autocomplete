@@ -63,6 +63,7 @@ public class    PrefixComparator implements Comparator<Term> {
             }
         }
 
-        return v.getWord().compareTo(w.getWord());
+        //return v.getWord().compareTo(w.getWord());
+        return 0;
     }
 }
