@@ -31,7 +31,8 @@ public class HashListAutocomplete implements Autocompletor {
             return list;
         }
 
-        return new ArrayList<Term>();
+        List<Term> empty = new ArrayList<>();
+		return empty;
     }
 
     @Override
