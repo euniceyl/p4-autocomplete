@@ -48,11 +48,11 @@ public class HashListAutocomplete implements Autocompletor {
                 String subterm = terms[i].substring(0, j);
                 myMap.putIfAbsent(subterm, new ArrayList<Term>());
                 myMap.get(subterm).add(term);
-            }
-
-            for (String key : myMap.keySet()) {
-                Collections.sort(myMap.get(key), Comparator.comparing(Term::getWeight).reversed());
-            }
+            } 
+        }
+        
+        for (String key : myMap.keySet()) {
+            Collections.sort(myMap.get(key), Comparator.comparing(Term::getWeight).reversed());
         }
     }
 
