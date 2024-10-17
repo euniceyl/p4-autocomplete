@@ -2,7 +2,7 @@
 
 ## Project Introduction	
 
-This project uses the autocomplete algorithm, where the user types text and the application suggests possible completions for that text.
+This project uses the autocomplete algorithm, where the user types text and the application suggests possible completions for that text. Although finding terms that contain a query by searching through all possible results is possible, these applications need some way to select only the most useful terms to display. Thus, the algorithm not only needs a way to find terms that start with or contain the prefix, but a way of determining how likely each one is to be useful to the user and displaying "good" terms first. This all needs to be done efficiently so that a user can see completions in real time. We leverage a `Comparator` in Java as well as the binary search algorithm on sorted data to implement an efficient autocompleter, then benchmark and analyze the tradeoffs of these implementations.  
 
 <details>
 <summary>Expand for examples</summary>
@@ -14,28 +14,13 @@ The left/first was taken in March 2019, the right/second on October 9, 2020)
 
 </details>
 
-Although finding terms that contain a query by searching through all possible results is possible, these applications need some way to select only the most useful terms to display. Thus, the algorithm not only needs a way to find terms that start with or contain the prefix, but a way of determining how likely each one is to be useful to the user and displaying "good" terms first. This all needs to be done efficiently so that a user can see completions in real time.
-
-In this project, we leverage a `Comparator` in Java as well as the binary search algorithm on sorted data to implement an efficient autocompleter. We then benchmark and analyze the tradeoffs of these implementations.  
-
-### Acknowledgements
 This project was developed by Kevin Wayne and Matthew Drabick at Princeton University for their Computer Science 226 class. Former head CompSci 201 UTAs, Arun Ganesh (Trinity '17) and Austin Lu (Trinity '15) adapted the assignment for Duke with help from Jeff Forbes. Josh Hug updated the assignment and provided more of the testing framework.
 
 </details>
 
-### High-Level Overview
-
-1. Run `AutocompleteMain` using `BruteAutoComplete` to see how the autocomplete application works. 
-2. Implement the `compare` method in the `PrefixComparator` class used in the `BinarySearchAutocomplete` class. Test with `TestTerm`.
-3. Implement two methods in `BinarySearchLibrary`: `firstIndex` and `lastIndex`, both of which will use the `PrefixComparator`. Test with `TestBinarySearchLibrary`.
-4. Finish implementing `BinarySearchAutocomplete` that extends `Autocompletor` by completing the `topMatches` method, using the `firstIndex` and `lastIndex` methods. Test with `TestBinarySearchAutocomplete` and running `AutocompleteMain` using `BinarySearchAutocomplete`.
-5. Create and implement a new class `HashListAutocomplete` that implements interface `Autocompletor`. Test by running `AutocompleteMain` using `HashListAutocomplete`.
-
 ## Part 1: Run Autocomplete Main
 
-When you fork and clone the project you'll be able to run the `main` method of `AutocompleteMain`. Doing so will launch a "GUI" (Graphical User Interface) that allows you to select a data file. The data file will determine the set of possible words to be recommended by the autocompleter application, and also includes weights for how common the words are. Several such files are included along with this project.
-
-Once you select a file, the GUI will prompt you to enter a term. As you type, you should see the most common words that complete what you have typed so far appearing. For example, if you run `AutocompleteMain` and select the file `words-333333.txt` from the data folder you should see the output below shown in the GUI window for the search query **auto**.  You'll use this same search term, `auto` to test the other implementations you develop.
+Running the `main` method of `AutocompleteMain` launches a GUI that allows the user to select a data file. The data file will determine the set of possible words to be recommended by the autocompleter application, and also includes weights for how common the words are. Several such files are included along with this project. When prompted to enter a term, the most common words that complete what the user has typed so far appear. For example, running `AutocompleteMain` and selecting the file `words-333333.txt` from the data folder leads to the output below shown in the GUI window for the search query **auto**:
 
 <details>
 <summary>Expand for example of program running</summary>
@@ -43,9 +28,6 @@ Once you select a file, the GUI will prompt you to enter a term. As you type, yo
   <img src="p4-figures/astrachanSearch.png">
 </div>
 </details>
-
-By default, `AutocompleteMain` is using `BruteAutocomplete` to find the correct words to display. You will write two additional implementations of the `Autocompleter` interface: `BinarySearchAutocomplete` and `HashListAutocomplete`. When you finish one, you can again run `AutocompleteMain` using your new implementation by changing the `AUTOCOMPLETOR_CLASS_NAME` just before the `main` method of `AutocompleteMain`.
-
 
 ## Part 2: Implement the `compare` method in `PrefixComparator`
 
