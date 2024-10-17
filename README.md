@@ -14,7 +14,7 @@ The left/first was taken in March 2019, the right/second on October 9, 2020)
 
 </details>
 
-This project was developed by Kevin Wayne and Matthew Drabick at Princeton University for their Computer Science 226 class. Former head CompSci 201 UTAs, Arun Ganesh (Trinity '17) and Austin Lu (Trinity '15) adapted the assignment for Duke with help from Jeff Forbes. Josh Hug updated the assignment and provided more of the testing framework.
+This project was developed by Kevin Wayne and Matthew Drabick at Princeton University for their Computer Science 226 class. Former head CompSci 201 UTAs, Arun Ganesh (Trinity '17) and Austin Lu (Trinity '15) adapted the project for Duke with help from Jeff Forbes. Josh Hug updated the assignment and provided more of the testing framework.
 
 </details>
 
@@ -31,19 +31,16 @@ Running the `main` method of `AutocompleteMain` launches a GUI that allows the u
 
 ## Part 2: Implement the `compare` method in `PrefixComparator`
 
-A `PrefixComparator` object is obtained by calling `PrefixComparator.getComparator` with an integer argument `r`, the size of the prefix for comparison purposes. The value is stored in the instance variable `myPrefixSize` as you'll see in the code. This class is used in `BinarySearchAutocomplete`, but not in `BruteAutocomplete`.
+A `PrefixComparator` object is obtained by calling `PrefixComparator.getComparator` with an integer argument `r`, the size of the prefix for comparison purposes. The value is stored in the instance variable `myPrefixSize`.
 
-You must use only the first `myPrefixSize` characters of the words stored in `Term` objects `v` and `w` that are passed to `PrefixComparator.compare`. However, if the length of either word is less than `myPrefixSize`, this comparator only compares up ***until the end of the shorter word.*** This means that although `"beeswax"` is greater than `"beekeeper"` when compared lexicographically, i.e., with the natural order for strings, the two words are considered equal using a `PrefixComparator.getComparator(3)` since only the first three characters are compared. You can expand below for more details and examples.
+Only the first `myPrefixSize` characters of the words stored in `Term` objects `v` and `w` are passed to `PrefixComparator.compare`. However, if the length of either word is less than `myPrefixSize`, this comparator only compares up ***until the end of the shorter word.***
 
 <details>
 <summary>More details on PrefixComparator</summary>
 
 For a `PrefixComparator.getComparator(4)`, `"beeswax"` is greater than `"beekeeper"` since `"bees"` is greater than `"beek"`. But `"bee"` is less than `"beekeeper"` and `"beeswax"` since only the first three characters are compared --- since `"bee"` has only three characters and these three characters are the same. ***The length*** of `"bee"` ***makes it less than*** `"beekeeper"`, just as it is when eight characters are used to compare these words.
 
-
-***Your code should examine only as many characters as needed to return a value.*** You should examine this minimal number of characters using a loop and calling `.charAt` to examine characters--- you'll need to write your loop and comparisons carefully to ensure that the prefix size is used correctly. See the table below for some examples. Recall that you can subtract characters, so `'a'` - `'b'` is a negative value and `'z'` - `'a'` is a positive value. You can also use `<` and `>` with `char` values.
-
-Here is a reference table for the `PrefixComparator` comparator. 
+This code examines a minimal number of characters as needed using a loop and calling `.charAt` to examine characters. Reference table for the `PrefixComparator` comparator:
 
 |r/prefix|v| |w| Note |
 |    -   |-|-|-| -    |
@@ -57,21 +54,14 @@ Here is a reference table for the `PrefixComparator` comparator.
 
 </details>
 
-You can test your code with the `TestTerm` JUnit class which has several tests for the `PrefixComparator` class.
-
-
 ## Part 3: Implement `BinarySearchLibrary`
 
-The class `BinarySearchLibrary` stores static utility methods used in the implementation of the `BinarySearchAutocomplete` class. You will need to implement two methods in particular: `firstIndex` and `lastIndex`. Both are variants on the Java API [`Collections.binarySearch(list, key, c)`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collections.html#binarySearch(java.util.List,T,java.util.Comparator)) method that, in addition to returning an index `i` such that `c.compare(list.get(i), key)==0`, also guarantee to find the first or last such index respectively. 
-
-`BinarySearchAutocomplete` will use these methods along with the `PrefixComparator` you already completed to efficiently determine the *range of possible completions of a given prefix of a word typed so far*.
+The class `BinarySearchLibrary` stores static utility methods used in the implementation of the `BinarySearchAutocomplete` class. Two methods are implemented in particular: `firstIndex` and `lastIndex`. `BinarySearchAutocomplete` will use these methods along with the `PrefixComparator` to efficiently determine the *range of possible completions of a given prefix of a word typed so far*.
 
 <details>
 <summary>Expand for details on implementing firstIndex and lastIndex</summary>
 
-You're given code in `BinarySearchLibrary.firstIndexSlow` that is correct, ***but does not meet performance requirements***. This slow implementation will be very slow in some situations, e.g., when a list has many equal values according to the given comparator. The code in the slow method  is **O(*N*)** where there are *N* equal values since the code could examine all the values. To meet performance criteria your code should be **O(log *N*)**, more specifically it should only need $`1 + \lceil log_2N \rceil`$ comparisons -- that is, one more than $`log_2N`$ rounded up.
-
-To get started, expand below to see an example of the standard Java API  [`Collections.binarySearch`](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Collections.html#binarySearch(java.util.List,T,java.util.Comparator)) method that has been slightly changed to use the same parameters as `firstIndex`.
+The code in `BinarySearchLibrary.firstIndexSlow` is a slow method with **O(*N*)** where there are *N* equal values since the code could examine all the values. To meet performance criteria, this code should be changed to **O(log *N*)**, more specifically it should only need $`1 + \lceil log_2N \rceil`$ comparisons -- that is, one more than $`log_2N`$ rounded up.
 
 ```java
 public static <T> int binarySearch(List<T> list, T target,
@@ -94,25 +84,19 @@ public static <T> int binarySearch(List<T> list, T target,
 }
 ```
 
-This method meets the *performance* requirement and returns an index `i` such that `comp.compare(list.get(i), target)==0`. However, it does *not* guarantee to return the first or last such index `i`. **Your task is to adapt this approach (outlined in the starter code) so that `firstIndex` and `lastIndex` return the first and last such indices respectively, while maintaining the same performance guarantee.** 
+This method returns an index `i` such that `comp.compare(list.get(i), target)==0` but does *not* guarantee to return the first or last such index `i`. We aim to adapt this approach so that `firstIndex` and `lastIndex` return the first and last such indices respectively, while maintaining the same performance guarantee. To do so, we added a `foundAt` variable and maintained the following **loop invariant** that should be true at the start of every iteration of the `while` loop, where [`low`, `high`] denote the integer values from `low` to `high`, inclusive. The invariant is:
 
-At a high level, note that binary search is efficient because at each iteration of the `while` loop it reduces the effective search range (`high`-`low`) by a multiplicative factor of 2, leading to the **O(log *N*)** performance. It is also correct because of the following *loop invariant* - at the start of the loop, the target is always at an index between `low` and `high` (if it is in the list). Your algorithm will need to do this as well. Hoewver, the example code shown above `return`s as soon as it finds a match. You will need to change this so that your algorithm keeps searching to find the first or last match respectively.
+1. `foundAt` should be the *least* (for `firstIndex`) or *greatest* (for `lastIndex`) index outside of [`low`, `high`] containting target (or -1 if there are none).
+2. All indices containing target *less than* `foundAt` (for `firstIndex`) or *greater than* `foundAt` (for `lastIndex`) should be inside of [`low`, `high`].
 
-We recommend trying to solve this problem by adding a `foundAt` variable (as shown in the starter code) and maintaining the following **loop invariant** that should be true at the start of every iteration of the `while` loop. Let [`low`, `high`] denote the integer values from `low` to `high`, inclusive. The invariant is:
-
-1. `foundAt` should be the *least* (for `firstIndex`) or *greatest* (for `lastIndex`) index outside of [`low`, `high`] containting target (or -1 if there are none). (Intuitively, this keeps track of the least or greatest valid index your algorithm has found so far).
-2. All indices containing target *less than* `foundAt` (for `firstIndex`) or *greater than* `foundAt` (for `lastIndex`) should be inside of [`low`, `high`]. (Intuitively, this means that any lesser or greater valid index than your algorithm has found so far should be inside the future search space).
-
-This invariant is initially established by setting `low = 0`, `high = list.size()-1`, and `foundAt = -1`. If it is maintained until `low > high`, then we can simply `return foundAt` to complete the method.
+This invariant is initially established by setting `low = 0`, `high = list.size()-1`, and `foundAt = -1`. If it is maintained until `low > high`, then we can `return foundAt` to complete the method.
 
 </details>
-
-You're given two classes to help verify that your methods are correct and meet performance requirements. The JUnit tests in `TestBinarySearchLibrary` can help you verify that your methods return the correct values. The output of running `BinaryBenchmark` can help verify both correctness and performance requirements. The output using a correct and efficient `BinarySearchLibrary` class is shown below when running `BinaryBenchmark`. 
 
 <details>
 <summary>Expand for example output of BinaryBenchmark</summary>
 
-The values in both `index` columns should be the same: the location of the first occurrence of the prefix shown. The `cslow` column is the number of comparisons made by the slow implementation `firstIndexSlow`. The `cfast` column is the number of comparisons made by `firstIndex`. Note that $`log2(26000)`$ is 14.666, and that 1+15 = 16, so the performance criterion is met. It is fine if your implementation differs in where there are 15s and 16s in the last columns as long as the values are all at most 16.
+The values in both `index` columns should be the same: the location of the first occurrence of the prefix shown. The `cslow` column is the number of comparisons made by the slow implementation `firstIndexSlow`. The `cfast` column is the number of comparisons made by `firstIndex`.
 
 ```
 size of list = 26000
@@ -129,20 +113,16 @@ zzz	 25000    25000	   194	16
 
 ## Part 4: Finish Implementing `topMatches` in `BinarySearchAutocomplete`
 
-Once you've implemented the methods in class `BinarySearchLibrary`, you'll still need to implement code for `topMatches` in the `BinarySearchAutocomplete` class -- a method required as specified in the `Autocompletor` interface. The other methods in `BinarySearchAutocomplete` are written, though two rely on the code you implemented in `BinarySearchLibrary`.
-
-There is a comment in the `topMatches` method indicating where you need to add more to complete the implementation. You can expand below for more details on the code already written in `topMatches` that you do not need to change.
+We now implement code for `topMatches` in the `BinarySearchAutocomplete` class -- a method required in the `Autocompletor` interface.
 
 <details>
-<summary>Expand for details on code already written in topMatches</summary>
+<summary>Expand for details on topMatches</summary>
 
-Code in static methods `firstIndexOf` and `lastIndexOf` is written to use the API exported by `BinarySearchLibrary`. You'll see that the `Term[]` parameter to these methods is transformed to a `List<Term>` since that's the type of parameter that must be passed to `BinarySearchLibrary` methods. 
-
-You'll also see a `Term` object called `dummy` created from the `String` passed to `topMatches`. The weight for the `Term` doesn't matter since only the `String` field of the `Term` is used in `firstIndex` and `lastIndex` calls.
+Code in static methods `firstIndexOf` and `lastIndexOf` is written to use the API exported by `BinarySearchLibrary`. `Term[]` parameter to these methods is transformed to a `List<Term>` since that's the type of parameter that must be passed to `BinarySearchLibrary` methods. The `Term` object called `dummy` created from the `String` is passed to `topMatches`. The weight for the `Term` doesn't matter since only the `String` field of the `Term` is used in `firstIndex` and `lastIndex` calls.
 
 </details>
 
-The `topMatches` method requires that you return the weightiest `k` matches that match `prefix` that's a parameter to `topMatches` --- note that `k` is a parameter to the method as well -- in order of weight. The calls to `firstIndex` and `lastIndex` give the first and last indices of `myTerms` that match. The code you write will need to return the `k` greatest `weight` of these in order. If there are fewer than `k` matches, it should just return all of the matches in order. Expand below for more details on how to do this efficiently using a `PriorityQueue`. 
+The `topMatches` method requires that the weightiest `k` matches that match `prefix` that's a parameter to `topMatches` is returned, in order of weight. The calls to `firstIndex` and `lastIndex` give the first and last indices of `myTerms` that match. Our code returns the `k` greatest `weight` of these in order. If there are fewer than `k` matches, it returns all of the matches in order.
 
 <details>
 <summary>Expand for details on efficient implementation of topMatches</summary> 
@@ -155,9 +135,7 @@ The binary search in the `firstIndex` and `lastIndex` methods are both `O(log N)
 |O(M log(M))|Sort all M elements that match prefix|
 |O(k)|Return list of top k matches|
 
-It's quite possible that `k < M`, and often `k` will be *much* less than `M`. Rather than sorting all `M` entries that match the prefix, you can use a size-limited priority queue using the same idea that's used in the `topMatches` method from `BruteAutocomplete`. Reference the code there for ideas. ***This is the approach you should implement.***
-
-This should make `topMatches` run in `O(log N + M log k)` time instead of `O(log N + M log M)`. In benchmarking, there may not be a noticeable difference for the data files you're given for small values of `M`, though with larger values of `M` there will be a difference.
+It's quite possible that `k < M`, and often `k` will be *much* less than `M`. Rather than sorting all `M` entries that match the prefix, we use a size-limited priority queue that makes `topMatches` run in `O(log N + M log k)` time instead of `O(log N + M log M)`.
 
 |Complexity|Reason|
 | ---      |  ---  |
@@ -167,8 +145,6 @@ This should make `topMatches` run in `O(log N + M log k)` time instead of `O(log
 
 </details>
 
-You're given a JUnit test class `TestBinarySearchAutocomplete` that you should run to verify your methods work correctly. You should also change the code in `AutocompleteMain` to use the `BinarySearchAutocomplete` class -- see the commented out lines as shown below. Then be sure that the output matches what you saw earlier when running the `main` method using `BruteAutocomplete`.
-
 ```java
 final static String AUTOCOMPLETOR_CLASS_NAME = BRUTE_AUTOCOMPLETE;
 //final static String AUTOCOMPLETOR_CLASS_NAME = BINARY_SEARCH_AUTOCOMPLETE;
@@ -177,9 +153,7 @@ final static String AUTOCOMPLETOR_CLASS_NAME = BRUTE_AUTOCOMPLETE;
 
 ## Part 5: Implement `HashListAutocomplete`
 
-In this part, you will provide one more implementation of the `Autocompletor` interface, this time from scratch. Unlike `BruteAutocomplete` and `BinarySearchAutocomplete`, this third implementation will be based on the use of a `HashMap` instead of the binary search algorithm. This class will provide an `O(1)` implementation of `topMatches` --- with a tradeoff of requiring more memory.
-
-A skeleton of `HashListAutocomplete` can be found in the `HashListAutocomplete.java` file that `implements` the `Autocompletor` interface. The declaration of the class and the instance variables you will need to add are shown in the code below. 
+This third implementation is based on the use of a `HashMap` instead of the binary search algorithm. This class will provide an `O(1)` implementation of `topMatches` --- with a tradeoff of requiring more memory.
 
 ```java
 public class HashListAutocomplete implements Autocompletor {
@@ -190,9 +164,7 @@ public class HashListAutocomplete implements Autocompletor {
 }
 ```
 
-There are four methods you will need to implement, stubs of which are provided in the starter code: `initialize`, `topMatches`, and `sizeInBytes` (details below).
-
-The class should maintain a `HashMap` of _every possible prefix_ (for each term) (up to the number of characters specified by a constant `MAX_PREFIX` that you should set to 10 as shown. The key in the map is a prefix/substring. The value for each prefix key is a weight-sorted list of `Term` objects that share that prefix. The diagram below shows part of such a `HashMap`. Three prefixes are shown---the corresponding values are shown as a weight-sorted list of `Term` objects.
+The class maintains a `HashMap` of _every possible prefix_ (for each term) (up to the number of characters specified by a constant `MAX_PREFIX` that you should set to 10 as shown. The key in the map is a prefix/substring. The value for each prefix key is a weight-sorted list of `Term` objects that share that prefix. The diagram below shows part of such a `HashMap`. Three prefixes are shown---the corresponding values are shown as a weight-sorted list of `Term` objects.
 
 |Prefix|Term Objects|
 | --   |    ----    |
@@ -200,28 +172,26 @@ The class should maintain a `HashMap` of _every possible prefix_ (for each term)
 |"cho"|("chomp",40), ("chocolate",10)|
 |"cha | ("chat",50), ("champ", 30)|
 
-Details on the four specific methods you need to write are in the expandable sections below.
+Details on the four methods:
 
 <details>
 <summary>Expand for details on the constructor</summary>
 
-You should create a constructor similar to those in the other implementations like `BruteAutocomplete` and `BinarySearchAutocomplete`; look at those for examples. The constructor calls just checks for invalid conditions and throws exceptions in those cases, otherwise it should simply call the `initialize()` method passing `terms` and `weights`.
+This constructor calls checks for invalid conditions and throws exceptions in those cases, otherwise it simply calls the `initialize()` method passing `terms` and `weights`.
 </details>
 
 <details>
 <summary>Expand for details on the initialize method</summary>
 
-For each `Term` in `initialize`, use the first `MAX_PREFIX` substrings as a key in the map the class maintains and uses. For each prefix you'll store the `Term` objects with that prefix in an `ArrayList` that is the corresponding value for the prefix in the map.
+For each `Term` in `initialize`, we use the first `MAX_PREFIX` substrings as a key in the map the class maintains and uses. For each prefix, we store the `Term` objects with that prefix in an `ArrayList` that is the corresponding value for the prefix in the map.
 
-***After*** all keys and values have been entered into the map, you'll write code to sort every value in the map, that is each `ArrayList` corresponding to each prefix. You must use a `Comparator.comparing(Term::getWeight).reversed()` object to sort so that the list is maintained sorted from high to low by weight, e.g., see below, and sort using this idea for each list associated with a key in the map.
-
-While it is not required, we highly recommend updating mySize as you're creating the map. mySize is a rough estimate of the number of bytes required to create the HashMap (both the String keys and the Term values in the HashMap). For each string you create, you'll need to add on `BYTES_PER_CHAR * length` to the number of bytes needed. For each term you store, each string stored contributes `BYTES_PER_CHAR * length` and each double stored contributes `BYTES_PER_DOUBLE`. If you follow these instructions, then you can ignore the sizeInBytes instructions and just return `mySize`.
+***After*** all keys and values have been entered into the map, we sort every value in the map, that is each `ArrayList` corresponding to each prefix. We use a `Comparator.comparing(Term::getWeight).reversed()` object to sort so that the list is maintained sorted from high to low by weight. We update mySize in creating this map. mySize is a rough estimate of the number of bytes required to create the HashMap (both the String keys and the Term values in the HashMap). For each string you create, we add on `BYTES_PER_CHAR * length` to the number of bytes needed. For each term you store, each string stored contributes `BYTES_PER_CHAR * length` and each double stored contributes `BYTES_PER_DOUBLE`.
 
 ```java
 Collections.sort(list, Comparator.comparing(Term::getWeight).reversed())`
 ```
 
-**_Be sure that you include the empty string as a substring!_** As an example, if I initialize HashListAutocomplete with one Term ("hippopotamus", 40), then my HashMap should be 
+Example: if we initialize HashListAutocomplete with one Term ("hippopotamus", 40), then my HashMap should be:
 
 |Prefix|Term Objects|
 | --   |    ----    |
@@ -244,9 +214,7 @@ We stop at "hippopotam" since we take prefixes up to `MAX_PREFIX` length.
 <details>
 <summary>Expand for details on the topMatches method</summary>
 
-The implementation of `topMatches` can then be done in about five lines of code or fewer. First, check that the `prefix` parameter has at most `MAX_PREFIX` characters, otherwise shorten it by truncating the trailing characters to `MAX_PREFIX` length. 
-
-Then, if `prefix` is in the map, get the corresponding value (a `List` of `Term` objects) and return a sublist of the first `k` entries (or all of the entries if there are fewer than `k`). Otherwise, you should return an empty list. Here's code that can help:
+To implement `topMatches`, we first check that the `prefix` parameter has at most `MAX_PREFIX` characters, otherwise shorten it by truncating the trailing characters to `MAX_PREFIX` length. Then, if `prefix` is in the map, we get the corresponding value (a `List` of `Term` objects) and return a sublist of the first `k` entries (or all of the entries if there are fewer than `k`). Otherwise, an empty list is returned.
 
 ```java
 List<Term> all = myMap.get(prefix);
@@ -258,9 +226,9 @@ List<Term> list = all.subList(0, Math.min(k, all.size()));
 <details>
 <summary>Expand for details on the sizeInBytes method</summary>
 
-You'll also need to implement the required `sizeInBytes` method. This method should return an estimate of the amount of memory (in bytes) necessary to store all of the keys and values in the `HashMap`. This can be computed once the first time `sizeInBytes` is called (that is, when `mySize == 0`) and stored in the instance variable `mySize`; on subsequent calls it can just return `mySize`. You can see similar examples in the `sizeInBytes` methods of `BruteAutocomplete` and `BinarySearchAutocomplete`.
+The `sizeInBytes` method returns an estimate of the amount of memory (in bytes) necessary to store all of the keys and values in the `HashMap`. This can be computed once the first time `sizeInBytes` is called (that is, when `mySize == 0`) and stored in the instance variable `mySize`; on subsequent calls it can just return `mySize`.
 
-Your method should account for every `Term` object and every String/key in the map. Use the implementations of `sizeInBytes` in the other `Autocomplete` classes as a model. Each string stored contributes `BYTES_PER_CHAR * length` to the bytes need. Each double stored contributes `BYTES_PER_DOUBLE`. You'll account for every `Term` stored in one of the lists in the map (each consisting of a String and a double) as well as every key (Strings) in the map.
+This method accounts for every `Term` object and every String/key in the map. Each string stored contributes `BYTES_PER_CHAR * length` to the bytes need. Each double stored contributes `BYTES_PER_DOUBLE`. We account for every `Term` stored in one of the lists in the map (each consisting of a String and a double) as well as every key (Strings) in the map.
 
 </details>
 
